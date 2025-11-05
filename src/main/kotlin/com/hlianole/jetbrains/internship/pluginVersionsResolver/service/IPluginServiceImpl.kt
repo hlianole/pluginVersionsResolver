@@ -22,6 +22,11 @@ class IPluginServiceImpl(
     }
 
     override fun save(pluginCreateRequest: PluginCreateRequest): Either<PluginError, Long> {
+        if (!PluginRequestValidator.validateVersionName(pluginCreateRequest.versionName) ||
+            !PluginRequestValidator.validatePlatform(pluginCreateRequest.platform)) {
+            return Either.Left(PluginError.InvalidRequest)
+        }
+
         val plugin = pluginRepository.save(pluginCreateRequest.toDomain())
             ?: return Either.Left(PluginError.InvalidRequest)
         return Either.Right(plugin.id)
@@ -30,6 +35,12 @@ class IPluginServiceImpl(
     override fun delete(id: Long) = pluginRepository.delete(id)
 
     override fun addVersion(pluginId: Long, versionCreateRequest: PluginVersionCreateRequest): Either<PluginError, Long> {
+        versionCreateRequest.variants.forEach {
+            if (!PluginRequestValidator.validatePlatform(it)) {
+                return Either.Left(PluginError.InvalidRequest)
+            }
+        }
+
         val version = versionCreateRequest.toDomain().copy(pluginId = pluginId)
         val created = pluginRepository.addVersion(version)
         return if (created == null) {
@@ -42,6 +53,10 @@ class IPluginServiceImpl(
     override fun deleteVersion(id: Long): Boolean = pluginRepository.deleteVersion(id)
 
     override fun addVariant(versionId: Long, platformCreateRequest: PlatformCreateRequest): Either<PluginError, Long> {
+        if (!PluginRequestValidator.validatePlatform(platformCreateRequest)) {
+            return Either.Left(PluginError.InvalidRequest)
+        }
+
         val variant = platformCreateRequest.toDomain().copy(versionId = versionId)
         val created = pluginRepository.addVariant(variant)
         if (created == null) {
