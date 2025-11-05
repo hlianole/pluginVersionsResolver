@@ -24,8 +24,16 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
+
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
+	// https://mvnrepository.com/artifact/org.mockito/mockito-core
+	testImplementation("org.mockito:mockito-core:5.20.0")
+	// https://mvnrepository.com/artifact/org.mockito.kotlin/mockito-kotlin
+	testImplementation("org.mockito.kotlin:mockito-kotlin:6.1.0")
+	// https://mvnrepository.com/artifact/io.mockk/mockk
+	testImplementation("io.mockk:mockk:1.14.6")
+
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 
 	// https://mvnrepository.com/artifact/org.jetbrains.kotlinx/kotlinx-serialization-json-jvm
