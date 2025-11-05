@@ -1,13 +1,13 @@
 package com.hlianole.jetbrains.internship.pluginVersionsResolver.dto
 
-import com.hlianole.jetbrains.internship.pluginVersionsResolver.model.Platform
-import com.hlianole.jetbrains.internship.pluginVersionsResolver.model.PluginPlatformVariant
 import com.hlianole.jetbrains.internship.pluginVersionsResolver.model.PluginVersion
+import kotlinx.serialization.Serializable
 import java.time.LocalDateTime
 
+@Serializable
 data class PluginVersionCreateRequest(
     val name: String,
-    val variants: List<Platform>
+    val variants: List<PlatformCreateRequest>
 )
 
 fun PluginVersionCreateRequest.toDomain(): PluginVersion {
@@ -17,11 +17,7 @@ fun PluginVersionCreateRequest.toDomain(): PluginVersion {
         name = name,
         releaseDate = LocalDateTime.now(),
         platformVariants = variants.map {
-            PluginPlatformVariant(
-                id = -1,
-                versionId = -1,
-                platform = it
-            )
-        },
+            it.toDomain()
+        }.toMutableList(),
     )
 }

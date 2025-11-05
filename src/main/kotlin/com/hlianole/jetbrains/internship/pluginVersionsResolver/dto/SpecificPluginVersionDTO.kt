@@ -1,8 +1,10 @@
 package com.hlianole.jetbrains.internship.pluginVersionsResolver.dto
 
 import com.hlianole.jetbrains.internship.pluginVersionsResolver.model.Plugin
+import kotlinx.serialization.Serializable
 import java.time.format.DateTimeFormatter
 
+@Serializable
 data class SpecificPluginVersionDTO (
     val id: Long,
     val artifactId: String,
@@ -12,18 +14,21 @@ data class SpecificPluginVersionDTO (
     val platform: PlatformDTO? = null,
 )
 
-val BASIC_FORMATTER: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS")
-
+@Serializable
 data class SpecificVersionDTO (
     val id: Long,
     val name: String,
     val releaseDate: String,
 )
 
+@Serializable
 data class PlatformDTO (
+    val id: Long,
     val os: String? = null,
     val arch: String? = null,
 )
+
+val BASIC_FORMATTER: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS")
 
 fun List<Plugin>.toDto(): List<SpecificPluginVersionDTO> {
     return this.flatMap {
@@ -45,6 +50,7 @@ fun Plugin.toDto(): List<SpecificPluginVersionDTO> {
                     releaseDate = version.releaseDate.format(BASIC_FORMATTER),
                 ),
                 platform = PlatformDTO(
+                    id = variant.id,
                     os = variant.platform?.os?.toString(),
                     arch = variant.platform?.arch?.toString(),
                 ),

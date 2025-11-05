@@ -7,7 +7,7 @@ data class Plugin(
     val artifactId: String,
     val description: String?,
     val vendor: String,
-    val versions: List<PluginVersion>,
+    val versions: MutableList<PluginVersion>,
 )
 
 data class PluginVersion(
@@ -15,7 +15,7 @@ data class PluginVersion(
     val pluginId: Long,
     val name: String,
     val releaseDate: LocalDateTime,
-    val platformVariants: List<PluginPlatformVariant>
+    val platformVariants: MutableList<PluginPlatformVariant>
 )
 
 data class PluginPlatformVariant(
@@ -44,9 +44,9 @@ fun PluginVersion.newer(other: PluginVersion): Boolean {
     }
 
     return when {
-        my.major != oth.major -> my.major < oth.major
-        my.minor != oth.minor -> my.minor < oth.minor
-        my.patch != oth.patch -> my.patch < oth.patch
+        my.major != oth.major -> my.major > oth.major
+        my.minor != oth.minor -> my.minor > oth.minor
+        my.patch != oth.patch -> my.patch > oth.patch
         else -> false
     }
 }

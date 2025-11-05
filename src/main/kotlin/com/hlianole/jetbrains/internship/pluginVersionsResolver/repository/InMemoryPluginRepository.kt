@@ -25,9 +25,10 @@ class InMemoryPluginRepository: IPluginRepository {
             return null
         }
 
-        val newPlugin = plugin.copy(id = nextPluginId(), artifactId = plugin.artifactId.lowercase())
+        val newPlugin = plugin.copy(id = nextPluginId(), artifactId = plugin.artifactId.lowercase(), versions = mutableListOf())
         plugins[newPlugin.id] = newPlugin
-        newPlugin.versions.forEach { version ->
+        pluginNames[newPlugin.artifactId]
+        plugin.versions.forEach { version ->
             addVersion(version.copy(pluginId = newPlugin.id))
         }
         return plugins[newPlugin.id]
@@ -52,15 +53,14 @@ class InMemoryPluginRepository: IPluginRepository {
         }
 
         val plugin = plugins[pluginId] ?: return null
-        if (!version.newer(plugin.versions.last())) {
+        if (plugin.versions.isNotEmpty() && !version.newer(plugin.versions.last())) {
             return null
         }
 
-        val newVersion = version.copy(id = nextVersionId())
+        val newVersion = version.copy(id = nextVersionId(), platformVariants = mutableListOf())
         versions[newVersion.id] = newVersion
-        val newPlugin = plugin.copy(versions = plugin.versions + newVersion)
-        plugins[pluginId] = newPlugin
-        newVersion.platformVariants.forEach { variant ->
+        plugin.versions.add(newVersion)
+        version.platformVariants.forEach { variant ->
             addVariant(variant.copy(versionId = newVersion.id))
         }
         return versions[newVersion.id]
@@ -75,8 +75,10 @@ class InMemoryPluginRepository: IPluginRepository {
         }
 
         versions.remove(version.id)
-        val newPlugin = plugin.copy(versions = plugin.versions - version)
-        plugins[newPlugin.id] = newPlugin
+        plugin.versions.remove(version)
+        if (plugin.versions.isEmpty()) {
+            plugins.remove(plugin.id)
+        }
         return true
     }
 
@@ -91,26 +93,20 @@ class InMemoryPluginRepository: IPluginRepository {
         if (pluginId < 0) {
             return null
         }
-        val plugin = plugins[pluginId] ?: return null
+        plugins[pluginId] ?: return null
 
         val newVariant = variant.copy(id = nextVariantId())
-        val newVersion = version.copy(platformVariants = version.platformVariants + newVariant)
-        versions[newVersion.id] = newVersion
-        val newPlugin = plugin.copy(versions = plugin.versions - version + newVersion)
-        plugins[pluginId] = newPlugin
+        version.platformVariants.add(newVariant)
         return newVariant
     }
 
     override fun deleteVariant(id: Long): Boolean {
         val variant = variants[id] ?: return false
         val version = versions[variant.versionId] ?: return false
-        val plugin = plugins[version.pluginId] ?: return false
+        plugins[version.pluginId] ?: return false
 
         variants.remove(variant.id)
-        val newVersion = version.copy(platformVariants = version.platformVariants - variant)
-        versions[version.id] = newVersion
-        val newPlugin = plugin.copy(versions = plugin.versions - version + newVersion)
-        plugins[newPlugin.id] = newPlugin
+        version.platformVariants.remove(variant)
         return true
     }
 

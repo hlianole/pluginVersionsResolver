@@ -4,7 +4,9 @@ import com.hlianole.jetbrains.internship.pluginVersionsResolver.model.Architectu
 import com.hlianole.jetbrains.internship.pluginVersionsResolver.model.OS
 import com.hlianole.jetbrains.internship.pluginVersionsResolver.model.Platform
 import com.hlianole.jetbrains.internship.pluginVersionsResolver.model.PluginPlatformVariant
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class PlatformCreateRequest (
     val os: String?,
     val arch: String?,

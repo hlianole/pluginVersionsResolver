@@ -11,12 +11,15 @@ object CompatibilityResolver {
     fun resolve(plugin: Plugin, os: String?, arch: String?): List<SpecificPluginVersionDTO> {
         val res = mutableListOf<SpecificPluginVersionDTO>()
         plugin.versions.forEach { version ->
+            if (version.platformVariants.isEmpty()) {
+                res.add(createDto(plugin, version, null))
+            }
             version.platformVariants.forEach { variant ->
                 val variantOs = variant.platform?.os?.name
                 val variantArch = variant.platform?.arch?.name
 
                 if (filterOs(variantOs, os) && filterArch(variantArch, arch)) {
-                    res.add(createDto(plugin, version, variantOs, variantArch))
+                    res.add(createDto(plugin, version, PlatformDTO(variant.id, variantOs, variantArch)))
                 }
             }
         }
@@ -26,8 +29,7 @@ object CompatibilityResolver {
     private fun createDto(
         plugin: Plugin,
         version: PluginVersion,
-        variantOs: String?,
-        variantArch: String?
+        platform: PlatformDTO?
     ) = SpecificPluginVersionDTO(
         id = plugin.id,
         artifactId = plugin.artifactId,
@@ -38,10 +40,7 @@ object CompatibilityResolver {
             name = version.name,
             releaseDate = version.releaseDate.format(BASIC_FORMATTER),
         ),
-        platform = PlatformDTO(
-            os = variantOs,
-            arch = variantArch,
-        ),
+        platform = platform,
     )
 
     private fun filterOs(variantOs: String?, os: String?): Boolean {
