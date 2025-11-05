@@ -8,22 +8,39 @@ import com.hlianole.jetbrains.internship.pluginVersionsResolver.model.Plugin
 import com.hlianole.jetbrains.internship.pluginVersionsResolver.model.PluginVersion
 
 object CompatibilityResolver {
-    fun resolve(plugin: Plugin, os: String?, arch: String?): List<SpecificPluginVersionDTO> {
-        val res = mutableListOf<SpecificPluginVersionDTO>()
-        plugin.versions.forEach { version ->
+    fun resolve(plugin: Plugin, os: String?, arch: String?): SpecificPluginVersionDTO? {
+        plugin.versions.reversed().forEach { version ->
             if (version.platformVariants.isEmpty()) {
-                res.add(createDto(plugin, version, null))
+                return createDto(plugin, version, null)
             }
-            version.platformVariants.forEach { variant ->
-                val variantOs = variant.platform?.os?.name
-                val variantArch = variant.platform?.arch?.name
 
-                if (filterOs(variantOs, os) && filterArch(variantArch, arch)) {
-                    res.add(createDto(plugin, version, PlatformDTO(variant.id, variantOs, variantArch)))
-                }
+            val filtered = version.platformVariants
+                .filter { variant ->
+                filterOs(variant.platform?.os?.name, os) &&
+                filterArch(variant.platform?.arch?.name, arch)
+            }.sortedWith(compareByDescending { variant ->
+                    val osMatch = os != null
+                            && variant.platform?.os?.name?.equals(os, ignoreCase = true) == true
+                    val archMatch = arch != null
+                            && variant.platform?.arch?.name?.equals(arch, ignoreCase = true) == true
+
+                    when {
+                        osMatch && archMatch -> 2
+                        osMatch -> 1
+                        archMatch -> 1
+                        else -> 0
+                    }
+                })
+
+            if (filtered.isNotEmpty()) {
+                return createDto(plugin, version, PlatformDTO(
+                    filtered.first().id,
+                    filtered.first().platform?.os?.name,
+                    filtered.first().platform?.arch?.name,
+                ))
             }
         }
-        return res
+        return null
     }
 
     private fun createDto(

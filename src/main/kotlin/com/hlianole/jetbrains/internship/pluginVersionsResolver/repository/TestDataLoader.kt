@@ -35,7 +35,7 @@ class TestDataLoader(
                             versionId = -1,
                             platform = Platform(
                                 os = OS.LINUX,
-                                arch = Architecture.X64,
+                                arch = null,
                             )
                         ),
                         PluginPlatformVariant(
@@ -80,6 +80,30 @@ class TestDataLoader(
                             platform = Platform(
                                 os = OS.WINDOWS,
                                 arch = Architecture.X86,
+                            )
+                        ),
+                        PluginPlatformVariant(
+                            id = -1,
+                            versionId = -1,
+                            platform = Platform(
+                                os = OS.LINUX,
+                                arch = Architecture.X64,
+                            )
+                        ),
+                        PluginPlatformVariant(
+                            id = -1,
+                            versionId = -1,
+                            platform = Platform(
+                                os = OS.LINUX,
+                                arch = Architecture.ARM64,
+                            )
+                        ),
+                        PluginPlatformVariant(
+                            id = -1,
+                            versionId = -1,
+                            platform = Platform(
+                                os = OS.LINUX,
+                                arch = null
                             )
                         )
                     )

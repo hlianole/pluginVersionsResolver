@@ -64,8 +64,10 @@ class IPluginServiceImpl(
         }
         val compatible = mutableListOf<SpecificPluginVersionDTO>()
         queried.forEach {
-            val allPluginCompatibleVersions = CompatibilityResolver.resolve(it, os, arch)
-            compatible.addAll(allPluginCompatibleVersions)
+            val bestMatch = CompatibilityResolver.resolve(it, os, arch)
+            if (bestMatch != null) {
+                compatible.add(bestMatch)
+            }
         }
 
         return compatible
