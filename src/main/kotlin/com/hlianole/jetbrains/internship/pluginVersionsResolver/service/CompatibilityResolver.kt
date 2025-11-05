@@ -1,11 +1,11 @@
 package com.hlianole.jetbrains.internship.pluginVersionsResolver.service
 
+import com.hlianole.jetbrains.internship.pluginVersionsResolver.dto.BASIC_FORMATTER
 import com.hlianole.jetbrains.internship.pluginVersionsResolver.dto.PlatformDTO
 import com.hlianole.jetbrains.internship.pluginVersionsResolver.dto.SpecificPluginVersionDTO
 import com.hlianole.jetbrains.internship.pluginVersionsResolver.dto.SpecificVersionDTO
 import com.hlianole.jetbrains.internship.pluginVersionsResolver.model.Plugin
 import com.hlianole.jetbrains.internship.pluginVersionsResolver.model.PluginVersion
-import java.time.format.DateTimeFormatter
 
 object CompatibilityResolver {
     fun resolve(plugin: Plugin, os: String?, arch: String?): List<SpecificPluginVersionDTO> {
@@ -36,8 +36,7 @@ object CompatibilityResolver {
         version = SpecificVersionDTO(
             id = version.id,
             name = version.name,
-            // -||-
-            releaseDate = version.releaseDate.format(DateTimeFormatter.ISO_DATE_TIME),
+            releaseDate = version.releaseDate.format(BASIC_FORMATTER),
         ),
         platform = PlatformDTO(
             os = variantOs,

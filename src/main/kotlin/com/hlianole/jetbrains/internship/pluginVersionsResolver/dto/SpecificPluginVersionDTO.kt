@@ -12,6 +12,8 @@ data class SpecificPluginVersionDTO (
     val platform: PlatformDTO? = null,
 )
 
+val BASIC_FORMATTER: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS")
+
 data class SpecificVersionDTO (
     val id: Long,
     val name: String,
@@ -40,8 +42,7 @@ fun Plugin.toDto(): List<SpecificPluginVersionDTO> {
                 version = SpecificVersionDTO(
                     id = version.id,
                     name = version.name,
-                    // Can be formated another way
-                    releaseDate = version.releaseDate.format(DateTimeFormatter.ISO_DATE_TIME),
+                    releaseDate = version.releaseDate.format(BASIC_FORMATTER),
                 ),
                 platform = PlatformDTO(
                     os = variant.platform?.os?.toString(),
