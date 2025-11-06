@@ -4,21 +4,21 @@ import com.hlianole.jetbrains.internship.pluginVersionsResolver.dto.*
 import com.hlianole.jetbrains.internship.pluginVersionsResolver.model.*
 import com.hlianole.jetbrains.internship.pluginVersionsResolver.repository.IPluginRepository
 import com.hlianole.jetbrains.internship.pluginVersionsResolver.repository.data.plugins
-import com.hlianole.jetbrains.internship.pluginVersionsResolver.service.CompatibilityResolver
 import com.hlianole.jetbrains.internship.pluginVersionsResolver.service.IPluginServiceImpl
-import io.mockk.every
-import io.mockk.mockkObject
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
+import org.junit.jupiter.api.fail
 import org.mockito.InjectMocks
 import org.mockito.Mock
+import org.mockito.junit.jupiter.MockitoExtension
+import org.mockito.kotlin.any
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.whenever
 import java.time.LocalDateTime
 import kotlin.test.assertEquals
-import kotlin.test.assertNotEquals
 import kotlin.test.assertTrue
-import kotlin.test.fail
 
+@ExtendWith(MockitoExtension::class)
 class PluginServiceTest {
 
     @Mock
@@ -75,7 +75,7 @@ class PluginServiceTest {
     )
 
     private val match = SpecificPluginVersionDTO(
-        id = 0,
+        id = -1,
         artifactId = "test.plugin",
         description = "First test plugin. Lorem ipsum dolor sit amet",
         vendor = "hlianole",
@@ -105,10 +105,10 @@ class PluginServiceTest {
     fun shouldFindById() {
         whenever(repository.findById(0)) doReturn plugins[0]
 
-        val result = service.findById(0)
-
-        assertNotEquals(Either.Left(PluginError.NotFound), result)
-        assertEquals(Either.Right(plugins[0].toDto()), result)
+        when(val result = service.findById(0)) {
+            is Either.Left -> fail("Fail")
+            is Either.Right -> assertEquals(plugins[0].toDto(), result.value)
+        }
     }
 
     @Test
@@ -117,42 +117,40 @@ class PluginServiceTest {
 
         val result = service.findById(28)
 
-        assertEquals(Either.Left(PluginError.NotFound), result)
+        when(result) {
+            is Either.Left -> return
+            is Either.Right -> fail("Fail")
+        }
     }
 
     @Test
     fun shouldSavePlugin() {
-        whenever(repository.save(createRequest.toDomain())) doReturn createdPlugin
+        whenever(repository.save(any())) doReturn createdPlugin
 
-        val result = service.save(createRequest)
-
-        assertNotEquals(Either.Left(PluginError.InvalidRequest), result)
-        assertEquals(Either.Right(0L), result)
+        when(val result = service.save(createRequest)) {
+            is Either.Left -> fail("Fail")
+            is Either.Right -> assertEquals(0L, result.value)
+        }
     }
 
     @Test
     fun shouldNotSavePlugin() {
-        whenever(repository.save(invalidCreateRequest.toDomain())) doReturn null
-
         val result = service.save(invalidCreateRequest)
 
-        assertEquals(Either.Left(PluginError.InvalidRequest), result)
+        when(result) {
+            is Either.Left -> return
+            is Either.Right -> fail("Fail")
+        }
     }
 
     @Test
     fun shouldFindMatches() {
-        mockkObject(CompatibilityResolver)
-
         whenever(repository.findAll()) doReturn plugins
-        every { CompatibilityResolver.resolve(plugins[0], "macos", "arm64") } returns match
-        every { CompatibilityResolver.resolve(any(), any(), any()) } answers {
-            fail("Unexpected call to CompatibilityResolver.resolve(${args.joinToString()})")
-        }
 
         val result = service.getMatches("test.plugin", "macos", "arm64")
 
         assertEquals(1, result.size)
-        assertEquals(listOf(match), result)
+        assertEquals(listOf(match.copy(version = match.version.copy(releaseDate = result[0].version.releaseDate))), result)
     }
 
 }

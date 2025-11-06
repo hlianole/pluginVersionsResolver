@@ -31,8 +31,6 @@ dependencies {
 	testImplementation("org.mockito:mockito-core:5.20.0")
 	// https://mvnrepository.com/artifact/org.mockito.kotlin/mockito-kotlin
 	testImplementation("org.mockito.kotlin:mockito-kotlin:6.1.0")
-	// https://mvnrepository.com/artifact/io.mockk/mockk
-	testImplementation("io.mockk:mockk:1.14.6")
 
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 
