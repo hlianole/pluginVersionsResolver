@@ -7,8 +7,8 @@ import com.hlianole.jetbrains.internship.pluginVersionsResolver.model.OS
 object PluginRequestValidator {
 
     fun validateVersionName(versionName: String): Boolean {
-        val regex = Regex("""^(\d+)\.(\d+)\.(\d+)(?:[-.]?([A-Za-z0-9]+))?$""")
-        return !regex.matches(versionName)
+        val regex = Regex("""^(\d+)\.(\d+)\.(\d+)(?:[-]([A-Za-z0-9]+(?:\.[A-Za-z0-9]+)*))?$""")
+        return regex.matches(versionName)
     }
 
     fun validatePlatform(platform: PlatformCreateRequest?): Boolean {
