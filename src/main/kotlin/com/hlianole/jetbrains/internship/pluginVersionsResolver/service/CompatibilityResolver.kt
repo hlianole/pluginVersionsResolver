@@ -7,6 +7,13 @@ import com.hlianole.jetbrains.internship.pluginVersionsResolver.dto.SpecificVers
 import com.hlianole.jetbrains.internship.pluginVersionsResolver.model.Plugin
 import com.hlianole.jetbrains.internship.pluginVersionsResolver.model.PluginVersion
 
+/**
+ * Searches for the best match between plugin's specific version.
+ *
+ * @return [SpecificPluginVersionDTO]. Priority is the latest version. But if request contains specific os/arch, an older version can be returned, if
+ * later versions do not contain the desired combination of os and arch. `null` will be returned if the versions
+ * does not contain the desired combination.
+ * */
 object CompatibilityResolver {
     fun resolve(plugin: Plugin, os: String?, arch: String?): SpecificPluginVersionDTO? {
         plugin.versions.reversed().forEach { version ->

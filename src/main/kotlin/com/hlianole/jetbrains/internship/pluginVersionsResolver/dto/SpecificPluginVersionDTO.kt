@@ -4,6 +4,9 @@ import com.hlianole.jetbrains.internship.pluginVersionsResolver.model.Plugin
 import kotlinx.serialization.Serializable
 import java.time.format.DateTimeFormatter
 
+/**
+ * Represents a single version of a plugin with a specific os/arch.
+ * */
 @Serializable
 data class SpecificPluginVersionDTO (
     val id: Long,

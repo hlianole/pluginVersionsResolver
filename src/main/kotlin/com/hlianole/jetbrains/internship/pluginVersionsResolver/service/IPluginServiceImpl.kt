@@ -72,6 +72,7 @@ class IPluginServiceImpl(
         query: String, os: String?, arch: String?
     ): List<SpecificPluginVersionDTO> {
         val plugins = pluginRepository.findAll()
+        // first filter -> query
         val queried = plugins.filter { plugin ->
             plugin.artifactId.contains(query, ignoreCase = true) ||
             plugin.vendor.contains(query, ignoreCase = true) ||
@@ -79,6 +80,7 @@ class IPluginServiceImpl(
         }
         val compatible = mutableListOf<SpecificPluginVersionDTO>()
         queried.forEach {
+            // detailed search -> see CompatibilityResolver
             val bestMatch = CompatibilityResolver.resolve(it, os, arch)
             if (bestMatch != null) {
                 compatible.add(bestMatch)

@@ -25,6 +25,10 @@ interface IPluginService {
 
     fun deleteVariant(id: Long): Boolean
 
+    /**
+     * @return list of the found plugins. Multiple plugins can be returned because it is possible
+     * to find different plugins using query.
+     * */
     fun getMatches(
         query: String, os: String? = null, arch: String? = null
     ): List<SpecificPluginVersionDTO>

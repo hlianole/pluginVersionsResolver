@@ -3,6 +3,9 @@ package com.hlianole.jetbrains.internship.pluginVersionsResolver.repository.data
 import com.hlianole.jetbrains.internship.pluginVersionsResolver.model.*
 import java.time.LocalDateTime
 
+/**
+ * List of plugins that can be used to test functionality of the application.
+ * */
 val plugins = listOf(
     Plugin(
         id = -1,

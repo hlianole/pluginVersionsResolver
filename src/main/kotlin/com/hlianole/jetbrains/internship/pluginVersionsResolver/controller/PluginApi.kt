@@ -13,6 +13,13 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.RequestParam
 
+/**
+ * Definition of application's endpoints
+ *
+ * Some methods return lists, even though it seems obvious at first glance. [SpecificPluginVersionDTO] represents
+ * a single version (including platform it was developed for) of a single plugin. So one plugin can be transformed
+ * to multiple [SpecificPluginVersionDTO] because it contains multiple versions with multiple platforms.
+ * */
 @Validated
 @RequestMapping("/api/plugins")
 interface PluginApi {

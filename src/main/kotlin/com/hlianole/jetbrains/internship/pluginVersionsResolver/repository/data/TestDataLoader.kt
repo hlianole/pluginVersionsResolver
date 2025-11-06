@@ -4,6 +4,9 @@ import com.hlianole.jetbrains.internship.pluginVersionsResolver.repository.IPlug
 import jakarta.annotation.PostConstruct
 import org.springframework.stereotype.Component
 
+/**
+ * Loads [plugins] to the memory.
+ * */
 @Component
 class TestDataLoader(
     private val pluginRepository: IPluginRepository

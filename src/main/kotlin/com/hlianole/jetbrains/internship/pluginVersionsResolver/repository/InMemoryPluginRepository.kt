@@ -11,6 +11,7 @@ import java.util.concurrent.atomic.AtomicLong
 @Repository
 class InMemoryPluginRepository: IPluginRepository {
 
+    // represent database tables
     private val plugins: ConcurrentHashMap<Long, Plugin> = ConcurrentHashMap()
     private val pluginNames: ConcurrentHashMap<String, Nothing> = ConcurrentHashMap()
     private val versions: ConcurrentHashMap<Long, PluginVersion> = ConcurrentHashMap()
@@ -20,6 +21,9 @@ class InMemoryPluginRepository: IPluginRepository {
 
     override fun findById(id: Long): Plugin? = plugins[id]
 
+    /**
+     * @param plugin Must have [Plugin.id]` == -1`.
+     * */
     override fun save(plugin: Plugin): Plugin? {
         if (pluginNames.containsKey(plugin.artifactId)) {
             return null
@@ -46,6 +50,10 @@ class InMemoryPluginRepository: IPluginRepository {
         return true
     }
 
+    /**
+     * @param version Must have [PluginVersion.id]` == -1` but [PluginVersion.pluginId] associated with existing
+     * plugin
+     * */
     override fun addVersion(version: PluginVersion): PluginVersion? {
         val pluginId = version.pluginId
         if (pluginId < 0 || version.id != -1L) {
@@ -82,6 +90,10 @@ class InMemoryPluginRepository: IPluginRepository {
         return true
     }
 
+    /**
+     * @param variant Must have [PluginPlatformVariant.id]` == -1` but [PluginPlatformVariant.versionId] associated with existing
+     * version
+     * */
     override fun addVariant(variant: PluginPlatformVariant): PluginPlatformVariant? {
         val versionId = variant.versionId
         if (versionId < 0 || variant.id != -1L) {
